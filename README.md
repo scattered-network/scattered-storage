@@ -1,10 +1,11 @@
-# scattered-storage
 An agnostic management system for the Ceph storage platform.
 
 ## Why?
-After spending more than a decade helping employers and clients work with 
-a fragmented ecosystem of tools for the management of their Ceph clusters 
-I have grown tired of constantly having to solve the same problems.
+This project is inspired by the ethos behind Ceph, this software 
+is an attempt at building a hardware, OS, and tooling agnostic 
+management system for Ceph.
 
-Inspired by the ethos behind Ceph, this software is an attempt at building 
-a hardware, OS, and tooling agnostic management system for Ceph.
+## What?
+Currently, this is a collection of methods which perform actions
+on, against, or for a cluster. The project is written in Go and
+is designed to be used as a library.
