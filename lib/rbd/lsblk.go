@@ -44,10 +44,10 @@ type ListBlock struct {
 
 // findDevicePath Goes through the list of mapped RBD images to verify the mapping of the image.
 // Once verified, the lsblk command is executed which returns the device mount information.
-func (c *RBDClient) findDevicePath(pool string, name string) *ListBlock {
+func (c *RadosBlockDeviceClient) findDevicePath(pool string, name string) *ListBlock {
 	log.Trace().Str("Pool", pool).Str("Name", name).Msg("findDevicePath")
 
-	list, showMappedError := ListMappedImages()
+	list, showMappedError := c.ListMappedImages()
 	if showMappedError != nil {
 		return &ListBlock{Blockdevices: nil}
 	}
@@ -87,7 +87,7 @@ func (c *RBDClient) findDevicePath(pool string, name string) *ListBlock {
 }
 
 // executeListBlock returns a listing of block devices on the server generated using lsblk.
-func (c *RBDClient) executeListBlock(device string) (*ListBlock, error) {
+func (c *RadosBlockDeviceClient) executeListBlock(device string) (*ListBlock, error) {
 	log.Trace().Str("Device", device).Msg("executeListBlock")
 
 	if !ValidateDevicePath(device) {

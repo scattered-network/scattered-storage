@@ -4,7 +4,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type RBDClient struct{}
+type RadosBlockDeviceClient struct{}
 
 // RBD
 /* rbd --pool rbd info test-image --format json
@@ -48,7 +48,7 @@ type RBD struct {
 
 // isMapped requires the 'pool' and 'name' of the rbd image to check and returns
 // both the device path and a bool representing the mapped state.
-func (c *RBDClient) isMapped(pool, name string) (string, bool) {
+func (c *RadosBlockDeviceClient) isMapped(pool, name string) (string, bool) {
 	if !ValidatePool(pool) {
 		return "", false
 	}

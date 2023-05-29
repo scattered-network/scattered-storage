@@ -14,7 +14,7 @@ import (
 )
 
 // CreateRBD validates the creation options and triggers the rbd create command.
-func CreateRBD(pool, name string, size int, suffix string) error {
+func (c *RadosBlockDeviceClient) CreateRBD(pool, name string, size int, suffix string) error {
 	if !ValidatePool(pool) {
 		return validators.ErrInvalidPoolName
 	}
@@ -31,8 +31,7 @@ func CreateRBD(pool, name string, size int, suffix string) error {
 		return validators.ErrInvalidSuffix
 	}
 
-	client := &RBDClient{}
-	if createError := client.executeRBDCreate(pool, name, size, suffix); createError != nil {
+	if createError := c.executeRBDCreate(pool, name, size, suffix); createError != nil {
 		return createError
 	}
 
@@ -41,7 +40,7 @@ func CreateRBD(pool, name string, size int, suffix string) error {
 
 // executeRBDCreate runs the rbd create command enabling the following features:
 // layering, striping, exclusive-lock, object-map, and fast-diff.
-func (c *RBDClient) executeRBDCreate(pool, name string, size int, suffix string) error {
+func (c *RadosBlockDeviceClient) executeRBDCreate(pool, name string, size int, suffix string) error {
 	log.Trace().Msg("executeRBDCreate")
 
 	sizeArgument := cast.ToString(size) + suffix

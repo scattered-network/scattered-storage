@@ -27,7 +27,7 @@ func PathExists(path string) (bool, error) {
 }
 
 // Mount will execute the mapping and mounting of a given RBD image.
-func Mount(pool, name, path string) error {
+func (c *RadosBlockDeviceClient) Mount(pool, name, path string) error {
 	if !ValidatePool(pool) {
 		return validators.ErrInvalidPoolName
 	}
@@ -41,15 +41,14 @@ func Mount(pool, name, path string) error {
 	} else {
 		if exists {
 			log.Trace().Str("Pool", pool).Str("Name", name).Msg("Mount")
-			client := &RBDClient{}
-			return client.executeMount(pool, name, path)
+			return c.executeMount(pool, name, path)
 		}
 	}
-	return nil
+	return ErrMountFailed
 }
 
 // executeMount performs the mapping, formatting, and mounting of an RBD image on the server.
-func (c *RBDClient) executeMount(pool, name, path string) error {
+func (c *RadosBlockDeviceClient) executeMount(pool, name, path string) error {
 	log.Trace().Msg("executeMount")
 
 	device, mapped := c.isMapped(pool, name)
@@ -70,20 +69,19 @@ func (c *RBDClient) executeMount(pool, name, path string) error {
 	partitionPath := device + "p1"
 
 	if !partitionsExist {
-		if partitionError := PartitionEntireDisk(device); partitionError != nil {
+		if partitionError := c.PartitionEntireDisk(device); partitionError != nil {
 			return partitionError
 		}
 
-		if probeError := Partprobe(device); probeError != nil {
+		if probeError := c.Partprobe(device); probeError != nil {
 			return probeError
 		}
 
-		client := &RBDClient{}
-		if makeFSError := c.makeFilesystem(partitionPath, client.getFilesystemOptionDefaults("xfs")); makeFSError != nil {
+		if makeFSError := c.makeFilesystem(partitionPath, c.getFilesystemOptionDefaults("xfs")); makeFSError != nil {
 			return makeFSError
 		}
 
-		if probeError := Partprobe(device); probeError != nil {
+		if probeError := c.Partprobe(device); probeError != nil {
 			return probeError
 		}
 	}
@@ -119,8 +117,8 @@ func (c *RBDClient) executeMount(pool, name, path string) error {
 	return nil
 }
 
-// getMountPoint returns the path where a given RBD image is currently mounted.
-func (c *RBDClient) getMountPoint(pool string, name string) (string, error) {
+// GetMountPoint returns the path where a given RBD image is currently mounted.
+func (c *RadosBlockDeviceClient) GetMountPoint(pool string, name string) (string, error) {
 	if !ValidatePool(pool) {
 		return "", validators.ErrInvalidPoolName
 	}
@@ -129,7 +127,7 @@ func (c *RBDClient) getMountPoint(pool string, name string) (string, error) {
 		return "", validators.ErrInvalidRBDName
 	}
 
-	log.Trace().Str("Pool", pool).Str("Name", name).Msg("getMountPoint")
+	log.Trace().Str("Pool", pool).Str("Name", name).Msg("GetMountPoint")
 
 	deviceMountInfo := c.findDevicePath(pool, name)
 
@@ -139,7 +137,7 @@ func (c *RBDClient) getMountPoint(pool string, name string) (string, error) {
 }
 
 // findMount returns the path where an RBD image has been mounted.
-func (c *RBDClient) findMount(deviceMountInfo *ListBlock) string {
+func (c *RadosBlockDeviceClient) findMount(deviceMountInfo *ListBlock) string {
 	log.Trace().Interface("deviceMountInfo", deviceMountInfo).Msg("Executing findMount")
 
 	if deviceMountInfo == nil {

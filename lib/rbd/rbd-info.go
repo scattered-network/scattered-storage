@@ -14,7 +14,7 @@ import (
 )
 
 // GetImageInfo Gathers *RBD image info for the '<pool>/<name>' image.
-func GetImageInfo(pool, name string) (*RBD, error) {
+func (c *RadosBlockDeviceClient) GetImageInfo(pool, name string) (*RBD, error) {
 	if !ValidatePool(pool) {
 		return nil, validators.ErrInvalidPoolName
 	}
@@ -25,7 +25,7 @@ func GetImageInfo(pool, name string) (*RBD, error) {
 
 	log.Trace().Str("Pool", pool).Str("Name", name).Msg("GetImageInfo")
 
-	client := &RBDClient{}
+	client := &RadosBlockDeviceClient{}
 	image, infoError := client.executeRBDInfo(pool, name)
 	if infoError != nil {
 		return nil, infoError
@@ -35,7 +35,7 @@ func GetImageInfo(pool, name string) (*RBD, error) {
 }
 
 // executeRBDInfo executes rbd info --format json for the given RBD image.
-func (c *RBDClient) executeRBDInfo(pool, name string) (*RBD, error) {
+func (c *RadosBlockDeviceClient) executeRBDInfo(pool, name string) (*RBD, error) {
 	log.Trace().Str("Pool", pool).Str("Name", name).Msg("executeRBDInfo")
 
 	var stdOut, stdErr bytes.Buffer

@@ -11,22 +11,21 @@ import (
 	"github.com/scattered-network/scattered-storage/lib/validators"
 )
 
-func Partprobe(device string) error {
+func (c *RadosBlockDeviceClient) Partprobe(device string) error {
 	log.Trace().Msg("Partprobe")
 
 	if !ValidateDevicePath(device) {
 		return validators.ErrInvalidDevicePath
 	}
 
-	client := &RBDClient{}
-	if probeError := client.executePartprobe(device); probeError != nil {
+	if probeError := c.executePartprobe(device); probeError != nil {
 		return probeError
 	}
 
 	return nil
 }
 
-func (c *RBDClient) executePartprobe(device string) error {
+func (c *RadosBlockDeviceClient) executePartprobe(device string) error {
 	log.Trace().Msg("executePartprobe")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

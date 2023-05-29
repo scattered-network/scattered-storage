@@ -32,7 +32,7 @@ type WipeFS struct {
 }
 
 // hasPartitions returns a boolean value representing success in finding any partitions.
-func (c *RBDClient) hasPartitions(device string) (bool, error) {
+func (c *RadosBlockDeviceClient) hasPartitions(device string) (bool, error) {
 	if !ValidateDevicePath(device) {
 		log.Trace().Str("Device", device).Msg("could not validate device path")
 
@@ -57,7 +57,7 @@ func (c *RBDClient) hasPartitions(device string) (bool, error) {
 }
 
 // hasSupportedFileSystem returns a boolean value representing success in finding a supported signature.
-func (c *RBDClient) hasSupportedFileSystem(device string) bool {
+func (c *RadosBlockDeviceClient) hasSupportedFileSystem(device string) bool {
 	if !ValidateDevicePath(device) {
 		log.Trace().Str("Device", device).Msg("could not validate device path")
 
@@ -77,7 +77,7 @@ func (c *RBDClient) hasSupportedFileSystem(device string) bool {
 	return false
 }
 
-func (c *RBDClient) isValidFilesystemType(fsType string) bool {
+func (c *RadosBlockDeviceClient) isValidFilesystemType(fsType string) bool {
 	switch fsType {
 	case "xfs":
 		return true

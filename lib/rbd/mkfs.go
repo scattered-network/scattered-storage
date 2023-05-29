@@ -31,7 +31,7 @@ const (
 )
 
 // makeFilesystem takes a device path and a set of *MkfsOptions to execute the mkfs command.
-func (c *RBDClient) makeFilesystem(device string, fsOptions *MkfsOptions) error {
+func (c *RadosBlockDeviceClient) makeFilesystem(device string, fsOptions *MkfsOptions) error {
 	if !ValidateDevicePath(device) {
 		return validators.ErrInvalidPoolName
 	}
@@ -41,13 +41,12 @@ func (c *RBDClient) makeFilesystem(device string, fsOptions *MkfsOptions) error 
 	}
 
 	log.Trace().Str("Device", device).Interface("Options", fsOptions).Msg("makeFilesystem")
-	client := &RBDClient{}
-	return client.executeMakeFilesystem(device, fsOptions)
+	return c.executeMakeFilesystem(device, fsOptions)
 }
 
 // getFilesystemOptionDefaults returns the suggested default options for a supported filesystem.
 // Currently, only XFS and EXT4 support is enabled.
-func (c *RBDClient) getFilesystemOptionDefaults(fsType string) *MkfsOptions {
+func (c *RadosBlockDeviceClient) getFilesystemOptionDefaults(fsType string) *MkfsOptions {
 	log.Trace().Str("FsType", fsType).Msg("getFilesystemOptionDefaults")
 
 	xfs := &MkfsOptions{
@@ -87,7 +86,7 @@ func (c *RBDClient) getFilesystemOptionDefaults(fsType string) *MkfsOptions {
 
 // executeMakeFilesystem executes the mkfs -t <filesystem> command and includes support for
 // the filesystem type and the no discard option (for use with very large images).
-func (c *RBDClient) executeMakeFilesystem(device string, fsOptions *MkfsOptions) error {
+func (c *RadosBlockDeviceClient) executeMakeFilesystem(device string, fsOptions *MkfsOptions) error {
 	log.Info().Str("Device", device).Interface("FsOptions", fsOptions).Msg("executeMakeFilesystem")
 
 	var stdOut, stdErr bytes.Buffer

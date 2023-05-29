@@ -43,9 +43,8 @@ type ShowMapped []struct {
 }
 
 // ListMappedImages returns the RBD images mapped to the host.
-func ListMappedImages() (*ShowMapped, error) {
-	client := &RBDClient{}
-	list, listError := client.executeShowMapped()
+func (c *RadosBlockDeviceClient) ListMappedImages() (*ShowMapped, error) {
+	list, listError := c.executeShowMapped()
 	if listError != nil {
 		log.Error().Str("Error", listError.Error()).Msg("Could not list mapped images")
 
@@ -56,7 +55,7 @@ func ListMappedImages() (*ShowMapped, error) {
 }
 
 // executeShowMapped runs the rbd showmapped --format json command and returns the results as *ShowMapped.
-func (c *RBDClient) executeShowMapped() (*ShowMapped, error) {
+func (c *RadosBlockDeviceClient) executeShowMapped() (*ShowMapped, error) {
 	var stdOut, stdErr bytes.Buffer
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

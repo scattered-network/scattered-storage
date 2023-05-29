@@ -14,13 +14,12 @@ import (
 	"github.com/scattered-network/scattered-storage/lib/validators"
 )
 
-func GetRBDList(pool string) ([]string, error) {
+func (c *RadosBlockDeviceClient) GetRBDList(pool string) ([]string, error) {
 	if !ValidatePool(pool) {
 		return nil, validators.ErrInvalidPoolName
 	}
 
-	client := &RBDClient{}
-	rbdList, listError := client.executeRBDList(pool)
+	rbdList, listError := c.executeRBDList(pool)
 	if listError != nil {
 		return nil, fmt.Errorf("%w", listError)
 	}
@@ -28,7 +27,7 @@ func GetRBDList(pool string) ([]string, error) {
 	return rbdList, nil
 }
 
-func (c *RBDClient) executeRBDList(pool string) (helpers.List, error) {
+func (c *RadosBlockDeviceClient) executeRBDList(pool string) (helpers.List, error) {
 	if !ValidatePool(pool) {
 		return nil, validators.ErrInvalidPoolName
 	}

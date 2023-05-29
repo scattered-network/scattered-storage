@@ -5,7 +5,7 @@ import (
 	"github.com/scattered-network/scattered-storage/lib/validators"
 )
 
-func (c *RBDClient) listLocks(pool, name string) ([]*Lock, error) {
+func (c *RadosBlockDeviceClient) listLocks(pool, name string) ([]*Lock, error) {
 	var list []*Lock
 
 	if !ValidatePool(pool) {
@@ -17,11 +17,10 @@ func (c *RBDClient) listLocks(pool, name string) ([]*Lock, error) {
 	}
 
 	log.Trace().Str("Pool", pool).Str("Name", name).Msg("ListLocks")
-	client := &RBDClient{}
-	return client.executeListLocks(pool, name)
+	return c.executeListLocks(pool, name)
 }
 
-func (c *RBDClient) addLock(pool, name string) error {
+func (c *RadosBlockDeviceClient) addLock(pool, name string) error {
 	if !ValidatePool(pool) {
 		return validators.ErrInvalidPoolName
 	}
@@ -31,11 +30,10 @@ func (c *RBDClient) addLock(pool, name string) error {
 	}
 
 	log.Trace().Str("Pool", pool).Str("Name", name).Msg("AddLock")
-	client := &RBDClient{}
-	return client.executeAddLock(pool, name)
+	return c.executeAddLock(pool, name)
 }
 
-func (c *RBDClient) removeLock(pool, name string, lock *Lock) error {
+func (c *RadosBlockDeviceClient) removeLock(pool, name string, lock *Lock) error {
 	if !ValidatePool(pool) {
 		return validators.ErrInvalidPoolName
 	}
@@ -46,6 +44,5 @@ func (c *RBDClient) removeLock(pool, name string, lock *Lock) error {
 
 	log.Trace().Str("Pool", pool).Str("Name", name).Interface("Lock", lock).Msg("RemoveLock")
 
-	client := &RBDClient{}
-	return client.executeRemoveLock(pool, name, lock)
+	return c.executeRemoveLock(pool, name, lock)
 }

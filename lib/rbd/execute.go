@@ -13,7 +13,7 @@ import (
 	"github.com/scattered-network/scattered-storage/lib/validators"
 )
 
-func (c *RBDClient) executeRBDMap(pool, name string) error {
+func (c *RadosBlockDeviceClient) executeRBDMap(pool, name string) error {
 	if !ValidatePool(pool) {
 		return validators.ErrInvalidPoolName
 	}
@@ -40,7 +40,7 @@ func (c *RBDClient) executeRBDMap(pool, name string) error {
 	return nil
 }
 
-func (c *RBDClient) executeAddLock(pool, name string) error {
+func (c *RadosBlockDeviceClient) executeAddLock(pool, name string) error {
 	log.Trace().Msg("starting executeAddLock")
 
 	if !ValidatePool(pool) {
@@ -71,7 +71,7 @@ func (c *RBDClient) executeAddLock(pool, name string) error {
 	return nil
 }
 
-func (c *RBDClient) executeListLocks(pool, name string) ([]*Lock, error) {
+func (c *RadosBlockDeviceClient) executeListLocks(pool, name string) ([]*Lock, error) {
 	log.Trace().Msg("executeListLocks")
 
 	var stdOut, stdErr bytes.Buffer
@@ -100,7 +100,7 @@ func (c *RBDClient) executeListLocks(pool, name string) ([]*Lock, error) {
 	return list, nil
 }
 
-func (c *RBDClient) executeRemoveLock(pool, name string, lock *Lock) error {
+func (c *RadosBlockDeviceClient) executeRemoveLock(pool, name string, lock *Lock) error {
 	log.Trace().Str("Pool", pool).Str("Name", name).Interface("Lock", lock).Msg("executeRemoveLock")
 
 	var stdOut, stdErr bytes.Buffer
@@ -123,7 +123,7 @@ func (c *RBDClient) executeRemoveLock(pool, name string, lock *Lock) error {
 	return nil
 }
 
-func (c *RBDClient) executeWipeFSWithoutAction(device string) (*WipeFS, error) {
+func (c *RadosBlockDeviceClient) executeWipeFSWithoutAction(device string) (*WipeFS, error) {
 	log.Trace().Str("Device", device).Msg("executeWipeFSWithoutAction")
 
 	var stdOut, stdErr bytes.Buffer

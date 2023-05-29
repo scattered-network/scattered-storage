@@ -11,26 +11,25 @@ import (
 	"github.com/scattered-network/scattered-storage/lib/validators"
 )
 
-func PartitionEntireDisk(device string) error {
+func (c *RadosBlockDeviceClient) PartitionEntireDisk(device string) error {
 	if !ValidateDevicePath(device) {
 		return validators.ErrInvalidDevicePath
 	}
 
 	log.Trace().Str("Device", device).Msg("PartitionEntireDisk")
 
-	client := &RBDClient{}
-	if clearError := client.executeClearPartitions(device); clearError != nil {
+	if clearError := c.executeClearPartitions(device); clearError != nil {
 		return clearError
 	}
 
-	if partitionError := client.executePartitionEntireDisk(device); partitionError != nil {
+	if partitionError := c.executePartitionEntireDisk(device); partitionError != nil {
 		return partitionError
 	}
 
 	return nil
 }
 
-func (c *RBDClient) executeClearPartitions(device string) error {
+func (c *RadosBlockDeviceClient) executeClearPartitions(device string) error {
 	log.Trace().Str("Device", device).Msg("executeClearPartitions")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -46,7 +45,7 @@ func (c *RBDClient) executeClearPartitions(device string) error {
 	return nil
 }
 
-func (c *RBDClient) executeZapPartitions(device string) error {
+func (c *RadosBlockDeviceClient) executeZapPartitions(device string) error {
 	log.Trace().Str("Device", device).Msg("executeZapPartitions")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -62,7 +61,7 @@ func (c *RBDClient) executeZapPartitions(device string) error {
 	return nil
 }
 
-func (c *RBDClient) executePartitionEntireDisk(device string) error {
+func (c *RadosBlockDeviceClient) executePartitionEntireDisk(device string) error {
 	log.Trace().Str("Device", device).Msg("executePartitionEntireDisk")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

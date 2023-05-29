@@ -12,7 +12,7 @@ import (
 	"github.com/scattered-network/scattered-storage/lib/validators"
 )
 
-func DeleteRBD(pool string, name string) error {
+func (c *RadosBlockDeviceClient) DeleteRBD(pool string, name string) error {
 	if !ValidatePool(pool) {
 		return validators.ErrInvalidPoolName
 	}
@@ -21,7 +21,7 @@ func DeleteRBD(pool string, name string) error {
 		return validators.ErrInvalidRBDName
 	}
 
-	client := &RBDClient{}
+	client := &RadosBlockDeviceClient{}
 	if deleteError := client.executeRBDDelete(pool, name); deleteError != nil {
 		return fmt.Errorf("%w", deleteError)
 	}
@@ -29,7 +29,7 @@ func DeleteRBD(pool string, name string) error {
 	return nil
 }
 
-func (c *RBDClient) executeRBDDelete(pool, name string) error {
+func (c *RadosBlockDeviceClient) executeRBDDelete(pool, name string) error {
 	if !ValidatePool(pool) {
 		return validators.ErrInvalidPoolName
 	}

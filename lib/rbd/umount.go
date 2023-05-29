@@ -15,7 +15,7 @@ import (
 )
 
 // Unmount will execute the umount and unmap of a given RBD image.
-func Unmount(pool, name string) error {
+func (c *RadosBlockDeviceClient) Unmount(pool, name string) error {
 	if !ValidatePool(pool) {
 		return validators.ErrInvalidPoolName
 	}
@@ -26,8 +26,7 @@ func Unmount(pool, name string) error {
 
 	log.Trace().Str("Pool", pool).Str("Name", name).Msg("Unmount")
 
-	client := &RBDClient{}
-	unmountError := client.executeUnmount(pool, name)
+	unmountError := c.executeUnmount(pool, name)
 	if unmountError != nil {
 		return unmountError
 	}
@@ -36,7 +35,7 @@ func Unmount(pool, name string) error {
 }
 
 // executeUnmount runs the umount -A command against the partition a device has mounted returns nil error on success.
-func (c *RBDClient) executeUnmount(pool, name string) error {
+func (c *RadosBlockDeviceClient) executeUnmount(pool, name string) error {
 	if !ValidatePool(pool) {
 		return validators.ErrInvalidPoolName
 	}
@@ -81,7 +80,7 @@ func (c *RBDClient) executeUnmount(pool, name string) error {
 }
 
 // Unmap will find the device path for a given image and unmap it from the server.
-func Unmap(pool, name string) error {
+func (c *RadosBlockDeviceClient) Unmap(pool, name string) error {
 	if !ValidatePool(pool) {
 		return validators.ErrInvalidDevicePath
 	}
@@ -92,15 +91,14 @@ func Unmap(pool, name string) error {
 
 	log.Trace().Str("Pool", pool).Str("Name", name).Msg("Unmap")
 
-	client := &RBDClient{}
-	deviceMountInfo := client.findDevicePath(pool, name)
+	deviceMountInfo := c.findDevicePath(pool, name)
 	if len(deviceMountInfo.Blockdevices) == 0 {
 		_, _ = fmt.Fprintf(os.Stderr, "no block device path found (for: %s), skipping umount", name)
 		return nil
 	}
 	device := deviceMountInfo.Blockdevices[0].Path
 
-	if unmountError := client.executeUnmap(device); unmountError != nil {
+	if unmountError := c.executeUnmap(device); unmountError != nil {
 		return unmountError
 	}
 
@@ -108,7 +106,7 @@ func Unmap(pool, name string) error {
 }
 
 // executeUnmap runs the rbd unmap command and returns nil error on success.
-func (c *RBDClient) executeUnmap(device string) error {
+func (c *RadosBlockDeviceClient) executeUnmap(device string) error {
 	if !ValidateDevicePath(device) {
 		return validators.ErrInvalidDevicePath
 	}
